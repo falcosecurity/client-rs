@@ -1,0 +1,18 @@
+[package]
+name = "falco-rs"
+version = "0.1.0"
+authors = ["Lorenzo Fontana <lo@linux.com>"]
+edition = "2018"
+publish = false
+
+[lib]
+name = "protos"
+path = "src/protos/mod.rs"
+
+[dependencies]
+grpcio = { version = "0.4.4", features = ["openssl"] }
+futures = "0.1.16"
+protobuf = "~2"
+
+[build-dependencies]
+protoc-grpcio = "1.0.2"
