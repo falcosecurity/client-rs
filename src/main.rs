@@ -1,5 +1,7 @@
-use futures::future::{Future, IntoFuture};
+use futures::*;
+
 use grpcio::{ChannelBuilder, EnvBuilder};
+use log;
 use protos::output;
 use protos::output_grpc;
 use std::sync::Arc;
@@ -11,14 +13,16 @@ fn main() {
     let mut req = output::request::default();
     req.keepalive = true;
 
-    let mut res = sc.subscribe(&req);
+    let mut res = sc.subscribe(&req).unwrap();
     loop {
         let f = res.into_future();
         match f.wait() {
-            Ok((Some(element), s)) => {
+            Ok((Some(feature), s)) => {
                 res = s;
+                log::info!("Thing {}", feature.get_rule());
             }
             Ok((None, _)) => break,
+            Err((e, _)) => panic!("List things failed: {:?}", e),
         }
     }
 

@@ -10,9 +10,10 @@ name = "protos"
 path = "src/protos/mod.rs"
 
 [dependencies]
-grpcio = { version = "0.4.4", features = ["openssl"] }
-futures = "0.1.16"
+grpcio = { version = "0.4.7", features = ["openssl"] }
+futures = "^0.1.15"
 protobuf = "~2"
+log = "0.4"
 
 [build-dependencies]
 protoc-grpcio = "1.0.2"
