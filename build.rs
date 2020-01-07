@@ -1,7 +1,5 @@
 extern crate protoc_grpcio;
 
-// use http::{Request, Response};
-
 fn main() {
     let proto_root = "src/protos";
     println!("cargo:rerun-if-changed={}", proto_root);
