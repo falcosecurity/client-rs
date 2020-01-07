@@ -1,7 +1,6 @@
 use futures::*;
 
 use grpcio::{ChannelBuilder, ChannelCredentialsBuilder, EnvBuilder};
-// use log;
 use protos::output;
 use protos::output_grpc;
 use std::sync::Arc;
@@ -32,13 +31,14 @@ fn main() {
     loop {
         let f = res.into_future();
         match f.wait() {
-            Ok((Some(feature), s)) => {
+            Ok((Some(element), s)) => {
                 res = s;
-                println!("Thing {}", feature.get_rule());
-                // log::info!("Thing {}", feature.get_rule());
+                println!("{:#?}", element);
             }
+            // EOF
             Ok((None, _)) => break,
-            Err((e, _)) => panic!("List things failed: {:?}", e),
+            // Error
+            Err((e, _)) => panic!("error: {:?}", e),
         }
     }
 
