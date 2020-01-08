@@ -9,5 +9,5 @@ fn main() {
         &proto_root,
         None,
     )
-    .expect("Failed to compile gRPC definitions!");
+        .expect("Failed to compile gRPC definitions!");
 }

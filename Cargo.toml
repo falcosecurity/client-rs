@@ -1,13 +1,9 @@
 [package]
-name = "falco-rs"
-version = "0.1.0"
-authors = ["Lorenzo Fontana <lo@linux.com>"]
+name = "falco"
+version = "0.0.0"
+authors = ["Lorenzo Fontana <lo@linux.com>", "Leonardo Di Donato <leodidonato@gmail.com>"]
 edition = "2018"
 publish = false
-
-[lib]
-name = "protos"
-path = "src/protos/mod.rs"
 
 [dependencies]
 grpcio = { version = "0.4.7", features = ["openssl"] }

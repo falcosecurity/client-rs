@@ -67,8 +67,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "falco-rs"
-version = "0.1.0"
+name = "falco"
+version = "0.0.0"
 dependencies = [
  "futures 0.1.29 (registry+https://github.com/rust-lang/crates.io-index)",
  "grpcio 0.4.7 (registry+https://github.com/rust-lang/crates.io-index)",
