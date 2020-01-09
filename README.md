@@ -4,8 +4,12 @@
 
 ## Install
 
-TODO
+To include as a dependency:
 
+```
+[dependencies]
+falco = "0.0.0"
+```
 
 ## Full Examples
 
