@@ -1,6 +1,6 @@
+use falco::api::output;
 use falco::client::Client;
 use falco::config::Config;
-use falco::protos::output;
 use futures::*;
 
 fn main() {

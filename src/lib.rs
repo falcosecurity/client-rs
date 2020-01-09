@@ -4,6 +4,6 @@
 //! With this crate you can easily connect to the Falco gRPC API, interact with it, receive the alerts, and ...
 //!
 
+pub mod api;
 pub mod client;
 pub mod config;
-pub mod protos;

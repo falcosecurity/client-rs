@@ -4,7 +4,7 @@ use std::sync::Arc;
 // pub type Result<T> = result::Result<T, dyn Error>;
 use crate::config;
 // use futures::*;
-use crate::protos::output_grpc;
+use crate::api::output_grpc;
 use grpcio::{ChannelBuilder, ChannelCredentialsBuilder, Environment};
 use std::{fs::File, io::Read, path::Path};
 

@@ -8,6 +8,7 @@ homepage = "https://github.com/falcosecurity/client-rs"
 documentation = "https://docs.rs/falco"
 description = "The rust language implementation of the Falco client."
 license = "Apache-2.0"
+keywords = ["falco", "falcosecurity", "kubernetes", "security"]
 
 [dependencies]
 grpcio = { version = "0.4.7", features = ["openssl"] }
@@ -17,5 +18,3 @@ log = "0.4"
 serde = "1.0"
 serde_derive = "1.0"
 
-[build-dependencies]
-protoc-grpcio = "1.0.2"
