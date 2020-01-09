@@ -2,17 +2,14 @@ use std::sync::Arc;
 
 /// A result holding an [`Error`](Error).
 // pub type Result<T> = result::Result<T, dyn Error>;
-
-use crate::{
-    config,
-    // protos::{output, output_grpc},
-};
+use crate::config;
 // use futures::*;
+use crate::protos::output_grpc;
 use grpcio::{ChannelBuilder, ChannelCredentialsBuilder, Environment};
 use std::{fs::File, io::Read, path::Path};
 
 pub trait Connect {
-    fn connect(&self, config: config::Config) -> Arc<grpcio::Channel>;
+    fn connect(env: Arc<Environment>, config: config::Config) -> grpcio::Channel;
 }
 
 pub struct FalcoConnect {
@@ -40,7 +37,7 @@ fn load_pem_file(path: &Path) -> Result<Vec<u8>, std::io::Error> {
 }
 
 impl Connect for FalcoConnect {
-    fn connect(&self, config: config::Config) -> Arc<grpcio::Channel> {
+    fn connect(env: Arc<Environment>, config: config::Config) -> grpcio::Channel {
         let credentials = ChannelCredentialsBuilder::new()
             // Set the PEM encoded server root cert to verify server's identity
             .root_cert(load_pem_file(config.ca.unwrap().as_ref()).unwrap())
@@ -51,28 +48,25 @@ impl Connect for FalcoConnect {
             )
             // Create channel credentials
             .build();
-        let ch = ChannelBuilder::new(self.env.clone())
-            .secure_connect(config.endpoint.as_str(), credentials);
-        Arc::new(ch)
+        ChannelBuilder::new(env).secure_connect(config.endpoint.as_str(), credentials)
     }
 }
 //TODO(fntlnz,leodido): keepalive, timeout, reconnect ?
 
 #[derive(Clone)]
 pub struct Client {
-    // pub env: Arc<Environment>,
+    channel: grpcio::Channel,
 }
 
 impl Client {
-    pub fn new(config: config::Config) -> Result<Client, ()> {
-        // let ca_crt = include_str!("/tmp/certs/ca.crt").into();
-        // let client_crt = include_str!("/tmp/certs/client.crt").into();
-        // let client_key = include_str!("/tmp/certs/client.key").into();
-
-        Ok(Client{})
+    pub fn new(config: config::Config) -> Client {
+        // TODO(fntlnz): make the completion queue configurable
+        let env = Arc::new(Environment::new(2));
+        let channel = FalcoConnect::connect(env, config);
+        Client { channel: channel }
     }
 
-    // pub fn outputs(&self, key: impl Into<Key>) -> impl Future<Output = Result<Option<Value>>> {
-    //     // requests::new_raw_get_request(key, self.cf.clone()).execute(self.rpc.clone())
-    // }
+    pub fn outputs(&self) -> output_grpc::ServiceClient {
+        output_grpc::ServiceClient::new(self.channel.clone())
+    }
 }
