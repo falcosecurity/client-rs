@@ -3,7 +3,11 @@ name = "falco"
 version = "0.0.0"
 authors = ["Lorenzo Fontana <lo@linux.com>", "Leonardo Di Donato <leodidonato@gmail.com>"]
 edition = "2018"
-publish = false
+publish = true
+homepage = "https://github.com/falcosecurity/client-rs"
+documentation = "https://docs.rs/falco"
+description = "The rust language implementation of the Falco client."
+license = "Apache-2.0"
 
 [dependencies]
 grpcio = { version = "0.4.7", features = ["openssl"] }
