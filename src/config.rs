@@ -18,9 +18,9 @@ impl Config {
     /// # use falco::client::Config;
     /// let config = Config::new("localhost:5060");
     /// ```
-    pub fn new(endpoint: String) -> Self {
+    pub fn new(endpoint: &str) -> Self {
         Config {
-            endpoint: endpoint,
+            endpoint: endpoint.into(),
             ca: None,
             cert: None,
             key: None,
@@ -34,7 +34,7 @@ impl Config {
     /// ```rust
     /// # use falco::client::Config;
     /// let config = Config::new("localhost:5060")
-    ///     .with_auth("root.crt", "client.crt", "client.key");
+    ///     .with_auth("ca.crt", "client.crt", "client.key");
     /// ```
     pub fn with_auth(
         mut self,
