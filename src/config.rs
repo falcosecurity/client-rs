@@ -1,5 +1,5 @@
 use serde_derive::{Deserialize, Serialize};
-use std::{path::PathBuf};
+use std::path::PathBuf;
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]
 #[serde(default)]
@@ -34,9 +34,9 @@ impl Config {
     /// ```rust
     /// # use falco::client::Config;
     /// let config = Config::new("localhost:5060")
-    ///     .with_security("root.ca", "internal.cert", "internal.key");
+    ///     .with_auth("root.crt", "client.crt", "client.key");
     /// ```
-    pub fn with_security(
+    pub fn with_auth(
         mut self,
         ca: impl Into<PathBuf>,
         cert: impl Into<PathBuf>,
