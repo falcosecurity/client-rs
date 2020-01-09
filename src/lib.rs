@@ -5,5 +5,5 @@
 //!
 
 pub mod client;
-mod config;
-mod protos;
+pub mod config;
+pub mod protos;
