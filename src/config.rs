@@ -18,7 +18,7 @@ impl Config {
     /// # use falco::client::Config;
     /// let config = Config::new("localhost:5060");
     /// ```
-    pub fn new(endpoint: impl Into<String>) -> Self {
+    pub fn new(endpoint: String) -> Self {
         Config {
             endpoint: endpoint,
             ca: None,
