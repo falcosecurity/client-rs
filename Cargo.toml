@@ -12,6 +12,7 @@ keywords = ["falco", "falcosecurity", "kubernetes", "security"]
 
 [dependencies]
 grpcio = { version = "0.4.7", features = ["openssl"] }
+failure = "0.1"
 futures = "^0.1.15"
 protobuf = "~2"
 log = "0.4"
