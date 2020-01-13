@@ -5,7 +5,6 @@ import "schema.proto";
 
 package falco.output;
 
-option go_package = "github.com/falcosecurity/client-go/pkg/api/output";
 
 // The `subscribe` service defines the RPC call
 // to perform an output `request` which will lead to obtain an output `response`.
