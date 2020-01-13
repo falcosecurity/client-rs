@@ -1,6 +1,7 @@
 # Falco Rust Client
 
-![crates](https://img.shields.io/badge/crates.io-v0.0.0-orange.svg?longCache=true)
+[![crates](https://img.shields.io/badge/crates.io-v0.0.0-orange.svg?style=flat-square&longCache=true)](https://crates.io/crates/falco)
+
 > The rust language implementation of the Falco client
 
 ## Install
