@@ -8,7 +8,7 @@
 
 To include as a dependency:
 
-```
+```toml
 [dependencies]
 falco = "0.0.0"
 ```
@@ -19,11 +19,19 @@ falco = "0.0.0"
 
 To execute any example:
 
+```console
+cargo run --example <name>
 ```
-cargo run --example <name> 
-```
+
 Where `<name>` needs to be changed with the file name of the example.
 
 ## Update protos
 
-TODO
+Do you want/need to update the proto files?
+
+We provided a make command - ie., `make protos` - to update them.
+
+```console
+make clean
+make
+```
