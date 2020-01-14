@@ -11,6 +11,12 @@ impl Error {
     pub fn kind(&self) -> &ErrorKind {
         self.inner.get_context()
     }
+
+    pub(crate) fn internal_error(message: impl Into<String>) -> Self {
+        Error::from(ErrorKind::InternalError {
+            message: message.into(),
+        })
+    }
 }
 
 #[derive(Debug, Fail)]
@@ -21,6 +27,9 @@ pub enum ErrorKind {
     /// Wraps a `grpcio::Error`.
     #[fail(display = "gRPC error: {}", _0)]
     Grpc(#[fail(cause)] grpcio::Error),
+    /// Wraps an internal message
+    #[fail(display = "{}", message)]
+    InternalError { message: String },
 }
 
 impl Fail for Error {
