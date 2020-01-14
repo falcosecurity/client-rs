@@ -13,7 +13,7 @@ fn main() {
     );
 
     // gRPC client
-    let client = Client::new(config);
+    let client = Client::new(config).unwrap();
 
     // Output request
     // Keepalive true means that the client will wait indefinitely for new events to come
