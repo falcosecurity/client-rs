@@ -1,7 +1,8 @@
 use std::sync::Arc;
 
 use crate::api::output_grpc;
-use crate::{certs, config, Error, Result};
+use crate::errors::Error;
+use crate::{certs, config, Result};
 use grpcio::{ChannelBuilder, ChannelCredentialsBuilder, Environment};
 
 pub trait Connect {
@@ -39,7 +40,7 @@ impl Connect for FalcoConnect {
 }
 
 // TODO(fntlnz,leodido): make the completion queue configurable
-//TODO(fntlnz,leodido): keepalive, timeout, reconnect ?
+// TODO(fntlnz,leodido): keepalive, timeout, reconnect ?
 
 #[derive(Clone)]
 pub struct Client {
@@ -49,8 +50,8 @@ pub struct Client {
 impl Client {
     pub fn new(config: config::Config) -> Result<Client> {
         let env = Arc::new(Environment::new(2));
-        let channel = FalcoConnect::connect(env, config);
-        Ok(Client { channel: channel? })
+        let channel = FalcoConnect::connect(env, config)?;
+        Ok(Client { channel: channel })
     }
 
     pub fn outputs(&self) -> output_grpc::ServiceClient {

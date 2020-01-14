@@ -24,9 +24,6 @@ pub enum ErrorKind {
     /// Wraps a `std::io::Error`.
     #[fail(display = "IO error: {}", _0)]
     Io(#[fail(cause)] std::io::Error),
-    /// Wraps a `grpcio::Error`.
-    #[fail(display = "gRPC error: {}", _0)]
-    Grpc(#[fail(cause)] grpcio::Error),
     /// Wraps an internal message
     #[fail(display = "{}", message)]
     InternalError { message: String },
@@ -53,12 +50,6 @@ impl From<ErrorKind> for Error {
         Error {
             inner: Context::new(kind),
         }
-    }
-}
-
-impl From<grpcio::Error> for Error {
-    fn from(err: grpcio::Error) -> Self {
-        Error::from(ErrorKind::Grpc(err))
     }
 }
 
