@@ -1,54 +1,40 @@
 use std::sync::Arc;
 
-/// A result holding an [`Error`](Error).
-// pub type Result<T> = result::Result<T, dyn Error>;
-use crate::config;
-// use futures::*;
 use crate::api::output_grpc;
+use crate::{certs, config, Error, Result};
 use grpcio::{ChannelBuilder, ChannelCredentialsBuilder, Environment};
-use std::{fs::File, io::Read, path::Path};
 
 pub trait Connect {
-    fn connect(env: Arc<Environment>, config: config::Config) -> grpcio::Channel;
+    fn connect(env: Arc<Environment>, config: config::Config) -> Result<grpcio::Channel>;
 }
 
 pub struct FalcoConnect {
     pub env: Arc<Environment>,
 }
 
-fn check_pem_file(path: &Path) -> Result<File, std::io::Error> {
-    File::open(path)
-    // .map_err(|e| internal_err!("failed to open {} to load {}: {:?}", path.display(), tag, e))
-}
-
-fn load_pem_file(path: &Path) -> Result<Vec<u8>, std::io::Error> {
-    let mut file = check_pem_file(path)?;
-    let mut key = vec![];
-    file.read_to_end(&mut key)
-        // .map_err(|e| {
-        //     internal_err!(
-        //         "failed to load {} from path {}: {:?}",
-        //         tag,
-        //         path.display(),
-        //         e
-        //     )
-        // })
-        .map(|_| key)
-}
-
 impl Connect for FalcoConnect {
-    fn connect(env: Arc<Environment>, config: config::Config) -> grpcio::Channel {
-        let credentials = ChannelCredentialsBuilder::new()
-            // Set the PEM encoded server root cert to verify server's identity
-            .root_cert(load_pem_file(config.ca.unwrap().as_ref()).unwrap())
-            // Set the PEM encoded client side cert and key
-            .cert(
-                load_pem_file(config.cert.unwrap().as_ref()).unwrap(),
-                load_pem_file(config.key.unwrap().as_ref()).unwrap(),
-            )
-            // Create channel credentials
-            .build();
-        ChannelBuilder::new(env).secure_connect(config.endpoint.as_str(), credentials)
+    fn connect(env: Arc<Environment>, config: config::Config) -> Result<grpcio::Channel> {
+        if let (Some(ca_path), Some(cert_path), Some(key_path)) =
+            (&config.ca, &config.cert, &config.key)
+        {
+            let root_cert = certs::load_pem_file(ca_path.as_ref())?;
+            let client_cert = certs::load_pem_file(cert_path.as_ref())?;
+            let client_key = certs::load_pem_file(key_path.as_ref())?;
+
+            let credentials = ChannelCredentialsBuilder::new()
+                // Set the PEM encoded server root cert to verify server's identity
+                .root_cert(root_cert)
+                // Set the PEM encoded client side cert and key
+                .cert(client_cert, client_key)
+                // Create channel credentials
+                .build();
+
+            Ok(ChannelBuilder::new(env).secure_connect(config.endpoint.as_str(), credentials))
+        } else {
+            Err(Error::internal_error(
+                "something wrong during client configuration",
+            ))
+        }
     }
 }
 //TODO(fntlnz,leodido): keepalive, timeout, reconnect ?
