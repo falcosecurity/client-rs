@@ -1,7 +1,7 @@
 use falco::api::output;
 use falco::client::Client;
 use falco::config::Config;
-use futures::{Future, IntoFuture, Sink, Stream};
+use futures::{Future, Stream};
 
 fn main() {
     // gRPC configuration
