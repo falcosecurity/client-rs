@@ -1,7 +1,8 @@
 use serde_derive::{Deserialize, Serialize};
+use std::default::Default;
 use std::path::PathBuf;
 
-#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 #[serde(default)]
 #[serde(rename_all = "kebab-case")]
 pub struct Config {
@@ -46,5 +47,16 @@ impl Config {
         self.cert = Some(cert.into());
         self.key = Some(key.into());
         self
+    }
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Config {
+            endpoint: "localhost:5060".to_owned(),
+            ca: Option::from(PathBuf::from("/tmp/certs/ca.crt")),
+            cert: Option::from(PathBuf::from("/etc/certs/client.crt")),
+            key: Option::from(PathBuf::from("/etc/certs/client.key")),
+        }
     }
 }
