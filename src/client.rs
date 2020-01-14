@@ -37,6 +37,8 @@ impl Connect for FalcoConnect {
         }
     }
 }
+
+// TODO(fntlnz,leodido): make the completion queue configurable
 //TODO(fntlnz,leodido): keepalive, timeout, reconnect ?
 
 #[derive(Clone)]
@@ -45,11 +47,10 @@ pub struct Client {
 }
 
 impl Client {
-    pub fn new(config: config::Config) -> Client {
-        // TODO(fntlnz): make the completion queue configurable
+    pub fn new(config: config::Config) -> Result<Client> {
         let env = Arc::new(Environment::new(2));
         let channel = FalcoConnect::connect(env, config);
-        Client { channel: channel }
+        Ok(Client { channel: channel? })
     }
 
     pub fn outputs(&self) -> output_grpc::ServiceClient {
