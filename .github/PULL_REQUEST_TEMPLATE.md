@@ -35,6 +35,8 @@ Here are some tips for you:
 
 > /area examples
 
+> /area build
+
 **What this PR does / why we need it**:
 
 **Which issue(s) this PR fixes**:
