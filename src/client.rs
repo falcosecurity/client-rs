@@ -15,12 +15,10 @@ pub struct FalcoConnect {
 
 impl Connect for FalcoConnect {
     fn connect(env: Arc<Environment>, config: config::Config) -> Result<grpcio::Channel> {
-        if let (Some(ca_path), Some(cert_path), Some(key_path)) =
-            (&config.ca, &config.cert, &config.key)
-        {
-            let root_cert = certs::load_pem_file(ca_path.as_ref())?;
-            let client_cert = certs::load_pem_file(cert_path.as_ref())?;
-            let client_key = certs::load_pem_file(key_path.as_ref())?;
+        if let Some(auth) = &config.auth {
+            let root_cert = certs::load_pem_file(auth.ca.as_ref())?;
+            let client_cert = certs::load_pem_file(auth.cert.as_ref())?;
+            let client_key = certs::load_pem_file(auth.key.as_ref())?;
 
             let credentials = ChannelCredentialsBuilder::new()
                 // Set the PEM encoded server root cert to verify server's identity
@@ -33,7 +31,7 @@ impl Connect for FalcoConnect {
             Ok(ChannelBuilder::new(env).secure_connect(config.endpoint.as_str(), credentials))
         } else {
             Err(Error::internal_error(
-                "something wrong during client configuration",
+                "unencrypted connections are not supported",
             ))
         }
     }
