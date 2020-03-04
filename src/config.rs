@@ -3,13 +3,19 @@ use std::default::Default;
 use std::path::PathBuf;
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct AuthConfig {
+    pub(crate) ca: PathBuf,
+    pub(crate) cert: PathBuf,
+    pub(crate) key: PathBuf,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 #[serde(default)]
 #[serde(rename_all = "kebab-case")]
 pub struct Config {
     pub(crate) endpoint: String,
-    pub(crate) ca: Option<PathBuf>,
-    pub(crate) cert: Option<PathBuf>,
-    pub(crate) key: Option<PathBuf>,
+    #[serde(flatten)]
+    pub(crate) auth: Option<AuthConfig>,
 }
 
 impl Config {
@@ -22,9 +28,7 @@ impl Config {
     pub fn new(endpoint: &str) -> Self {
         Config {
             endpoint: endpoint.into(),
-            ca: None,
-            cert: None,
-            key: None,
+            auth: None,
         }
     }
 
@@ -43,9 +47,11 @@ impl Config {
         cert: impl Into<PathBuf>,
         key: impl Into<PathBuf>,
     ) -> Self {
-        self.ca = Some(ca.into());
-        self.cert = Some(cert.into());
-        self.key = Some(key.into());
+        self.auth = Some(AuthConfig {
+            ca: ca.into(),
+            cert: cert.into(),
+            key: key.into(),
+        });
         self
     }
 }
@@ -54,9 +60,11 @@ impl Default for Config {
     fn default() -> Self {
         Config {
             endpoint: "localhost:5060".to_owned(),
-            ca: Option::from(PathBuf::from("/tmp/certs/ca.crt")),
-            cert: Option::from(PathBuf::from("/etc/certs/client.crt")),
-            key: Option::from(PathBuf::from("/etc/certs/client.key")),
+            auth: Some(AuthConfig {
+                ca: PathBuf::from("/tmp/certs/ca.crt"),
+                cert: PathBuf::from("/etc/certs/client.crt"),
+                key: PathBuf::from("/etc/certs/client.key"),
+            }),
         }
     }
 }
