@@ -51,7 +51,7 @@ impl Client {
     pub fn new(config: config::Config) -> Result<Client> {
         let env = Arc::new(Environment::new(2));
         let channel = FalcoConnect::connect(env, config)?;
-        Ok(Client { channel: channel })
+        Ok(Client { channel })
     }
 
     pub fn outputs(&self) -> output_grpc::ServiceClient {
