@@ -16,7 +16,7 @@ impl Config {
     /// Create a new [`Config`](Config) with the given Falco gRPC endpoint.
     ///
     /// ```rust
-    /// # use falco::client::Config;
+    /// use falco::config::Config;
     /// let config = Config::new("localhost:5060");
     /// ```
     pub fn new(endpoint: &str) -> Self {
@@ -33,7 +33,7 @@ impl Config {
     /// This is required by default from the Falco gRPC server.
     ///
     /// ```rust
-    /// # use falco::client::Config;
+    /// use falco::config::Config;
     /// let config = Config::new("localhost:5060")
     ///     .with_auth("ca.crt", "client.crt", "client.key");
     /// ```
