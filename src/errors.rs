@@ -1,23 +1,7 @@
-use failure::{Backtrace, Context, Fail};
-use std::fmt::{self, Display};
+use failure::{Context, Fail};
 use std::result;
 
-#[derive(Debug)]
-pub struct Error {
-    inner: Context<ErrorKind>,
-}
-
-impl Error {
-    pub fn kind(&self) -> &ErrorKind {
-        self.inner.get_context()
-    }
-
-    pub(crate) fn internal_error(message: impl Into<String>) -> Self {
-        Error::from(ErrorKind::InternalError {
-            message: message.into(),
-        })
-    }
-}
+pub use failure::ResultExt;
 
 #[derive(Debug, Fail)]
 pub enum ErrorKind {
@@ -25,39 +9,40 @@ pub enum ErrorKind {
     #[fail(display = "IO error: {}", _0)]
     Io(#[fail(cause)] std::io::Error),
     /// Wraps an internal message
-    #[fail(display = "{}", message)]
-    InternalError { message: String },
+    #[fail(display = "[{}:{}]: {}", file, line, message)]
+    InternalError {
+        file: String,
+        line: u32,
+        message: String,
+    },
 }
 
-impl Fail for Error {
-    fn cause(&self) -> Option<&dyn Fail> {
-        self.inner.cause()
-    }
-
-    fn backtrace(&self) -> Option<&Backtrace> {
-        self.inner.backtrace()
-    }
-}
-
-impl Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Display::fmt(&self.inner, f)
-    }
-}
-
-impl From<ErrorKind> for Error {
-    fn from(kind: ErrorKind) -> Error {
-        Error {
-            inner: Context::new(kind),
+impl ErrorKind {
+    pub(crate) fn internal_error(
+        file: impl Into<String>,
+        line: u32,
+        message: impl Into<String>,
+    ) -> Self {
+        ErrorKind::InternalError {
+            file: file.into(),
+            line,
+            message: message.into(),
         }
     }
 }
 
-impl From<std::io::Error> for Error {
-    fn from(err: std::io::Error) -> Self {
-        Error::from(ErrorKind::Io(err))
-    }
-}
+pub type Error = Context<ErrorKind>;
 
 /// Result with an error
 pub type Result<T> = result::Result<T, Error>;
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_internal_error_format() {
+        let err = internal_err!("testing");
+        let err_str = err.to_string();
+        // yes, this is fragile
+        assert_eq!(err_str, "[src/errors.rs:43]: testing");
+    }
+}
