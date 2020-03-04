@@ -15,3 +15,4 @@ mod errors;
 pub use crate::errors::Error;
 pub use crate::errors::ErrorKind;
 pub use crate::errors::Result;
+pub use crate::errors::ResultExt; // reexport of failure::ResultExt
