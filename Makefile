@@ -3,9 +3,9 @@ SHELL := /bin/bash
 PROTOC ?= $(shell which protoc)
 GRPC_RUST_PLUGIN ?= $(shell which grpc_rust_plugin)
 
-PROTOS := protos/schema.proto protos/output.proto
-PROTO_URLS := https://raw.githubusercontent.com/falcosecurity/falco/master/userspace/falco/schema.proto https://raw.githubusercontent.com/falcosecurity/falco/master/userspace/falco/output.proto
-PROTO_SHAS := a1f427c114b945d0880b55058862b74015d036aa722985ca6e5474ab4ed19f69 4ce2f3e6d6ebc07a74535c4f21da73e44c6ef848ab83627b1ac987058be5ece9
+PROTOS := protos/schema.proto protos/outputs.proto protos/version.proto
+PROTO_URLS := https://raw.githubusercontent.com/falcosecurity/falco/master/userspace/falco/schema.proto https://raw.githubusercontent.com/falcosecurity/falco/master/userspace/falco/outputs.proto https://raw.githubusercontent.com/falcosecurity/falco/master/userspace/falco/version.proto
+PROTO_SHAS := 1adf7fbb2b92793a3cf490204314af7788ffd81655c4cedb40587a22db9c1915 5e3bdc564c4d38f7d70a8fe50e6022a733ed93197edff6b824a24c6a45fed6c3 fc470546c00273bafe20b53ab6b7e0784206b8f6f9a705df92994e89035a5dc4
 
 PROTO_DIRS := $(dir ${PROTOS})
 PROTO_DIRS_INCLUDES := $(patsubst %/, -I %, ${PROTO_DIRS})

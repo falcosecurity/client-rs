@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::api::output_grpc;
+use crate::api::outputs_grpc;
 use crate::{certs, config, Result};
 use grpcio::{ChannelBuilder, ChannelCredentialsBuilder, Environment};
 
@@ -50,7 +50,7 @@ impl Client {
         Ok(Client { channel })
     }
 
-    pub fn outputs(&self) -> output_grpc::ServiceClient {
-        output_grpc::ServiceClient::new(self.channel.clone())
+    pub fn outputs(&self) -> outputs_grpc::ServiceClient {
+        outputs_grpc::ServiceClient::new(self.channel.clone())
     }
 }

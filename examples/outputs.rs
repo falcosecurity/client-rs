@@ -1,7 +1,10 @@
-use falco::api::output;
+use falco::api::outputs;
 use falco::client::Client;
 use falco::config::Config;
-use futures::{Future, Stream};
+use futures::{Async, Future, Sink, Stream};
+use std::sync::{Arc, Mutex};
+use std::thread::{sleep, spawn};
+use std::time;
 
 fn main() {
     // gRPC configuration
@@ -18,18 +21,38 @@ fn main() {
     // Output request
     // Keepalive true means that the client will wait indefinitely for new events to come
     // Use keepalive false if you only want to receive the accumulated events and stop
-    let mut req = output::request::default();
-    req.keepalive = true;
+    let req = outputs::request::default();
+    let wrflags = grpcio::WriteFlags::default();
+    //req.keepalive = true;
 
     // Subscribe to output events
-    let mut res = client.outputs().subscribe(&req).unwrap();
+    let (mut sink, mut receiver) = client.outputs().sub().unwrap();
+
+    let sink_lock = Arc::new(Mutex::new(sink.wait()));
+
+    let sink_lock_copy = Arc::clone(&sink_lock);
+
+    // Spawn a thread to request new data every 100ms
+    spawn(move || {
+        let req = outputs::request::default();
+        let time_to_sleep = time::Duration::from_millis(100);
+        loop {
+            sleep(time_to_sleep);
+            let mut sink = sink_lock_copy.lock().unwrap();
+            sink.send((req.clone(), wrflags)).expect("Failed to send");
+        }
+    });
 
     // Consume the events
     loop {
-        let f = res.into_future();
+        {
+            let mut sink = sink_lock.lock().unwrap();
+            sink.send((req.clone(), wrflags)).expect("Failed to send");
+        }
+        let f = receiver.into_future();
         match f.wait() {
             Ok((Some(element), s)) => {
-                res = s;
+                receiver = s;
                 println!("{:#?}", element);
             }
             // EOF
